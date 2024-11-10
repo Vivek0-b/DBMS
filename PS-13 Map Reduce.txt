@@ -1,0 +1,188 @@
+
+test> use StudentDB
+switched to db StudentDB
+StudentDB> db.Student.insertMany([
+...   { roll_no: "A101", name: "Alice", class: "TE", dept: "Computer Science", aggregate_marks: 80 },
+...   { roll_no: "A102", name: "Bob", class: "SE", dept: "Electrical", aggregate_marks: 75 },
+...   { roll_no: "A103", name: "Charlie", clas...   { roll_no: "A103", name: "Charlie", class: "TE", dept: "Mechanical", aggregate_marks: 88 },
+...   { roll_no: "A104", name: "David", class: "BE", dept: "Civil", aggregate_marks: 92 },
+...   { roll_no: "A105", name: "Eve", class: "SE", dept: "Electrical", aggregate_marks: 85 },
+...   { roll_no: "A106", name: "Frank", class: "BE", dept: "Computer Science", aggregate_marks: 78 },
+...   { roll_no: "A107", name: "Grace", class: "TE", dept: "Chemical", aggregate_marks: 90 },
+...   { roll_no: "A108", name: "Hank", class: "SE", dept: "Mechanical", aggregate_marks: 70 }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6730c314686e56236b0d8190'),
+    '1': ObjectId('6730c314686e56236b0d8191'),
+    '2': ObjectId('6730c314686e56236b0d8192'),
+    '3': ObjectId('6730c314686e56236b0d8193'),
+    '4': ObjectId('6730c314686e56236b0d8194'),
+    '5': ObjectId('6730c314686e56236b0d8195'),
+    '6': ObjectId('6730c314686e56236b0d8196'),
+    '7': ObjectId('6730c314686e56236b0d8197')
+  }
+}
+StudentDB> db.Student.mapReduce(
+...   function() {
+...     if (this.class === "TE") {
+...       emit(this.dept, this.aggregate_marks);  // Emit department as key, and aggregate_marks as value
+...     }
+...   },
+...   function(key, values) {
+...     return Array.sum(values);  // Reduce function: sum up the marks for each department
+...   },
+...   {
+...     out: "total_marks_by_dept"  // Output collection
+...   }
+... );
+DeprecationWarning: Collection.mapReduce() is deprecated. Use an aggregation instead.
+See https://docs.mongodb.com/manual/core/map-reduce for details.
+{ result: 'total_marks_by_dept', ok: 1 }
+StudentDB>
+
+StudentDB> // Display the result
+
+StudentDB> db.total_marks_by_dept.find().pretty();
+[
+  { _id: 'Computer Science', value: 80 },
+  { _id: 'Mechanical', value: 88 },
+  { _id: 'Chemical', value: 90 }
+]
+StudentDB> db.Student.mapReduce(
+...   function() {
+...     if (this.class === "SE") {
+...       emit(this.dept, this.aggregate_marks);  // Emit department as key, and aggregate_marks as value
+...     }
+...   },
+...   function(key, values) {
+...     return Math.max.apply(null, values);  // Reduce function: find the highest marks for
+ each department
+...   },
+...   {
+...     out: "highest_marks_by_dept"  // Outpu
+t collection
+...   }
+... );
+{ result: 'highest_marks_by_dept', ok: 1 }
+StudentDB>
+
+StudentDB> // Display the result
+
+StudentDB> db.highest_marks_by_dept.find().pretty();
+[ { _id: 'Mechanical', value: 70 }, { _id: 'Electrical', value: 85 } ]
+StudentDB> db.Student.mapReduce(
+...   function() {
+...     if (this.class === "BE") {
+...       emit(this.dept, { totalMarks: this.aggregate_marks, count: 1 });  // Emit department as key, and marks and count as value
+...     }
+...   },
+...   function(key, values) {
+...     var result = { totalMarks: 0, count: 0 };
+...     values.forEach(function(value) {
+...       result.totalMarks += value.totalMarks;  // Sum up the total marks
+...       result.count += value.count;  // Count the number of students
+...     });
+...     result.avgMarks = result.totalMarks / result.count;  // Calculate the average
+...     return result;
+...   },
+...   {
+...     out: "average_marks_by_dept"  // Output collection
+...   }
+... );
+{ result: 'average_marks_by_dept', ok: 1 }
+StudentDB>
+
+StudentDB> // Display the result
+
+StudentDB> db.average_marks_by_dept.find().pretty();
+[
+  { _id: 'Civil', value: { totalMarks: 92, count: 1, avgMarks: 92 } },
+  {
+    _id: 'Computer Science',
+    value: { totalMarks: 78, count: 1, avgMarks: 78 }
+  }
+]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+db.Student.insertMany([
+  { roll_no: "A101", name: "Alice", class: "TE", dept: "Computer Science", aggregate_marks: 80 },
+  { roll_no: "A102", name: "Bob", class: "SE", dept: "Electrical", aggregate_marks: 75 },
+  { roll_no: "A103", name: "Charlie", class: "TE", dept: "Mechanical", aggregate_marks: 88 },
+  { roll_no: "A104", name: "David", class: "BE", dept: "Civil", aggregate_marks: 92 },
+  { roll_no: "A105", name: "Eve", class: "SE", dept: "Electrical", aggregate_marks: 85 },
+  { roll_no: "A106", name: "Frank", class: "BE", dept: "Computer Science", aggregate_marks: 78 },
+  { roll_no: "A107", name: "Grace", class: "TE", dept: "Chemical", aggregate_marks: 90 },
+  { roll_no: "A108", name: "Hank", class: "SE", dept: "Mechanical", aggregate_marks: 70 }
+]);
+
+
+db.Student.mapReduce(
+  function() {
+    if (this.class === "TE") {
+      emit(this.dept, this.aggregate_marks);  // Emit department as key, and aggregate_marks as value
+    }
+  },
+  function(key, values) {
+    return Array.sum(values);  // Reduce function: sum up the marks for each department
+  },
+  {
+    out: "total_marks_by_dept"  // Output collection
+  }
+);
+
+// Display the result
+db.total_marks_by_dept.find().pretty();
+
+
+
+
+
+db.Student.mapReduce(
+  function() {
+    if (this.class === "SE") {
+      emit(this.dept, this.aggregate_marks);  // Emit department as key, and aggregate_marks as value
+    }
+  },
+  function(key, values) {
+    return Math.max.apply(null, values);  // Reduce function: find the highest marks for each department
+  },
+  {
+    out: "highest_marks_by_dept"  // Output collection
+  }
+);
+
+// Display the result
+db.highest_marks_by_dept.find().pretty();
+
+
+
+
+
+db.Student.mapReduce(
+  function() {
+    if (this.class === "BE") {
+      emit(this.dept, { totalMarks: this.aggregate_marks, count: 1 });  // Emit department as key, and marks and count as value
+    }
+  },
+  function(key, values) {
+    var result = { totalMarks: 0, count: 0 };
+    values.forEach(function(value) {
+      result.totalMarks += value.totalMarks;  // Sum up the total marks
+      result.count += value.count;  // Count the number of students
+    });
+    result.avgMarks = result.totalMarks / result.count;  // Calculate the average
+    return result;
+  },
+  {
+    out: "average_marks_by_dept"  // Output collection
+  }
+);
+
+// Display the result
+db.average_marks_by_dept.find().pretty();
+

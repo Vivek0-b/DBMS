@@ -1,0 +1,111 @@
+// Step 1: Create and switch to the database
+use SocialMediaDB
+
+// Step 2: Create the collection and insert 3 entries
+db.Social_Media.insertMany([
+  { 
+    User_Id: 1, 
+    User_Name: "Alice", 
+    No_of_Posts: 120, 
+    No_of_Friends: 3, 
+    Friends_List: ["Bob", "Charlie", "David"], 
+    Interests: ["Music", "Travel"] 
+  },
+  { 
+    User_Id: 2, 
+    User_Name: "Bob", 
+    No_of_Posts: 85, 
+    No_of_Friends: 2, 
+    Friends_List: ["Alice", "Eve"], 
+    Interests: ["Sports", "Cooking"] 
+  },
+  { 
+    User_Id: 3, 
+    User_Name: "Charlie", 
+    No_of_Posts: 150, 
+    No_of_Friends: 5, 
+    Friends_List: ["Alice", "David", "Frank"], 
+    Interests: ["Photography", "Gaming"] 
+  }
+]);
+
+// Step 3: Run the queries
+
+// 1. List all the users from the collection in a formatted manner
+print("Query 1: List all users")
+db.Social_Media.find().pretty();
+
+// 2. Find all users having number of posts greater than 100
+print("\nQuery 2: Users with posts greater than 100")
+db.Social_Media.find({ No_of_Posts: { $gt: 100 } });
+
+// 3. List the user names and their respective Friends_List
+print("\nQuery 3: List user names and their Friends_List")
+db.Social_Media.find({}, { User_Name: 1, Friends_List: 1, _id: 0 });
+
+// 4. Display the user ids and Friends list of users who have more than 2 friends
+print("\nQuery 4: User IDs and Friends list for users with more than 2 friends")
+db.Social_Media.find({ No_of_Friends: { $gt: 2 } }, { User_Id: 1, Friends_List: 1, _id: 0 });
+
+// 5. Display all users with number of posts in descending order
+print("\nQuery 5: Users sorted by number of posts in descending order")
+db.Social_Media.find().sort({ No_of_Posts: -1 });
+------------------------------------------------------------------------------------------------------------
+
+
+
+
+db.Social_Media.insertMany([
+  { User_Id: 1, User_Name: "Alice", No_of_Posts: 120, No_of_Friends: 10, Friends_List: ["Bob", "Charlie", "David"], Interests: ["Music", "Travel"] },
+  { User_Id: 2, User_Name: "Bob", No_of_Posts: 85, No_of_Friends: 5, Friends_List: ["Alice", "Eve"], Interests: ["Sports", "Cooking"] },
+  { User_Id: 3, User_Name: "Charlie", No_of_Posts: 95, No_of_Friends: 8, Friends_List: ["David", "Alice"], Interests: ["Photography", "Gaming"] },
+  { User_Id: 4, User_Name: "David", No_of_Posts: 200, No_of_Friends: 12, Friends_List: ["Alice", "Frank"], Interests: ["Movies", "Reading"] },
+  { User_Id: 5, User_Name: "Eve", No_of_Posts: 45, No_of_Friends: 4, Friends_List: ["Bob", "Charlie"], Interests: ["Art", "Dancing"] },
+  { User_Id: 6, User_Name: "Frank", No_of_Posts: 150, No_of_Friends: 6, Friends_List: ["David", "Grace"], Interests: ["Fitness", "Cooking"] },
+  { User_Id: 7, User_Name: "Grace", No_of_Posts: 75, No_of_Friends: 7, Friends_List: ["Alice", "Heidi"], Interests: ["Travel", "Yoga"] },
+  { User_Id: 8, User_Name: "Heidi", No_of_Posts: 130, No_of_Friends: 9, Friends_List: ["Grace", "Ivan"], Interests: ["Swimming", "Hiking"] },
+  { User_Id: 9, User_Name: "Ivan", No_of_Posts: 40, No_of_Friends: 3, Friends_List: ["Heidi"], Interests: ["Gardening", "Music"] },
+  { User_Id: 10, User_Name: "Judy", No_of_Posts: 220, No_of_Friends: 15, Friends_List: ["Bob", "Charlie", "David"], Interests: ["Movies", "Photography"] },
+  { User_Id: 11, User_Name: "Mallory", No_of_Posts: 60, No_of_Friends: 2, Friends_List: ["Grace"], Interests: ["Writing", "Travel"] },
+  { User_Id: 12, User_Name: "Oscar", No_of_Posts: 30, No_of_Friends: 1, Friends_List: [], Interests: ["Gaming"] },
+  { User_Id: 13, User_Name: "Peggy", No_of_Posts: 110, No_of_Friends: 5, Friends_List: ["Charlie", "Ivan"], Interests: ["Cooking", "Movies"] },
+  { User_Id: 14, User_Name: "Sybil", No_of_Posts: 105, No_of_Friends: 6, Friends_List: ["Alice", "Bob"], Interests: ["Art", "Reading"] },
+  { User_Id: 15, User_Name: "Trent", No_of_Posts: 90, No_of_Friends: 4, Friends_List: ["Heidi", "Judy"], Interests: ["Swimming"] },
+  { User_Id: 16, User_Name: "Victor", No_of_Posts: 125, No_of_Friends: 7, Friends_List: ["Mallory", "Eve"], Interests: ["Hiking", "Photography"] },
+  { User_Id: 17, User_Name: "Walter", No_of_Posts: 80, No_of_Friends: 3, Friends_List: ["Alice"], Interests: ["Movies"] },
+  { User_Id: 18, User_Name: "Xavier", No_of_Posts: 145, No_of_Friends: 9, Friends_List: ["Peggy", "Sybil"], Interests: ["Music", "Fitness"] },
+  { User_Id: 19, User_Name: "Yvonne", No_of_Posts: 60, No_of_Friends: 2, Friends_List: ["Trent"], Interests: ["Yoga"] },
+  { User_Id: 20, User_Name: "Zara", No_of_Posts: 55, No_of_Friends: 1, Friends_List: [], Interests: ["Reading"] }
+]);
+
+
+
+
+
+
+
+
+db.Social_Media.find().pretty();
+
+
+
+
+db.Social_Media.find({ No_of_Posts: { $gt: 100 } });
+
+
+
+
+
+
+
+
+db.Social_Media.find({}, { User_Name: 1, Friends_List: 1, _id: 0 });
+
+
+
+
+db.Social_Media.find({ No_of_Friends: { $gt: 5 } }, { User_Id: 1, Friends_List: 1, _id: 0 });
+
+
+
+db.Social_Media.find().sort({ No_of_Posts: -1 });

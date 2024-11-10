@@ -1,0 +1,41 @@
+mongosh
+
+use School
+
+db.Student.insertMany([
+   { Roll_No: "A01", Name: "John", Class: "SE", Marks: 65, Address: "Street 1", Enrolled_Courses: ["DBMS", "TOC"] },
+   { Roll_No: "A02", Name: "Alice", Class: "TE", Marks: 85, Address: "Street 2", Enrolled_Courses: ["Math", "TOC"] },
+   { Roll_No: "A03", Name: "Bob", Class: "SE", Marks: 45, Address: "Street 3", Enrolled_Courses: ["DBMS", "OS"] },
+   { Roll_No: "A04", Name: "Charlie", Class: "BE", Marks: 70, Address: "Street 4", Enrolled_Courses: ["TOC", "Math"] },
+   { Roll_No: "A05", Name: "David", Class: "TE", Marks: 55, Address: "Street 5", Enrolled_Courses: ["DBMS", "TOC"] },
+   { Roll_No: "A06", Name: "Eve", Class: "SE", Marks: 30, Address: "Street 6", Enrolled_Courses: ["Math", "Physics"] },
+   { Roll_No: "A07", Name: "Frank", Class: "TE", Marks: 60, Address: "Street 7", Enrolled_Courses: ["TOC", "Chemistry"] },
+   { Roll_No: "A08", Name: "Grace", Class: "BE", Marks: 92, Address: "Street 8", Enrolled_Courses: ["DBMS", "Math"] },
+   { Roll_No: "A09", Name: "Heidi", Class: "SE", Marks: 35, Address: "Street 9", Enrolled_Courses: ["TOC", "OS"] },
+   { Roll_No: "A10", Name: "Ivan", Class: "TE", Marks: 75, Address: "Street 10", Enrolled_Courses: ["Physics", "Chemistry"] }
+]);
+
+//ist the names of students who have enrolled in the course “DBMS” or “TOC”:
+db.Student.find({ Enrolled_Courses: { $in: ["DBMS", "TOC"] } }, { Name: 1, _id: 0 });
+
+
+//List the Roll numbers and class of students who have marks more than 50 or class as TE:
+db.Student.find({ $or: [{ Marks: { $gt: 50 } }, { Class: "TE" }] }, { Roll_No: 1, Class: 1, _id: 0 });
+
+
+//Update the entire record of student with roll number A10:\\
+db.Student.updateOne({ Roll_No: "A10" }, { $set: { Name: "Ivan Updated", Class: "BE", Marks: 80, Address: "Updated Street 10", Enrolled_Courses: ["Math", "DBMS"] } });
+
+//Display the names of students having the 3rd and 4th highest marks:
+db.Student.find().sort({ Marks: -1 }).skip(2).limit(2).forEach(doc => print(doc.Name));
+
+
+//Delete the records of students having marks less than 20:
+db.Student.deleteMany({ Marks: { $lt: 20 } });
+
+//Delete only the first record from the collection
+db.Student.deleteOne({});
+
+//verify changes
+
+db.Student.find().pretty();
