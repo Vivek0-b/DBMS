@@ -1,0 +1,69 @@
+use StudentDB  // Switch to the StudentDB database
+
+
+db.Student_Data.insertMany([
+  { Student_ID: "S101", Student_Name: "Alice", Department: "Computer Science", Marks: 85 },
+  { Student_ID: "S102", Student_Name: "Bob", Department: "Electrical", Marks: 75 },
+  { Student_ID: "S103", Student_Name: "Charlie", Department: "Mechanical", Marks: 88 },
+  { Student_ID: "S104", Student_Name: "David", Department: "Civil", Marks: 92 },
+  { Student_ID: "S105", Student_Name: "Eve", Department: "Electrical", Marks: 82 },
+  { Student_ID: "S106", Student_Name: "Frank", Department: "Computer Science", Marks: 78 },
+  { Student_ID: "S107", Student_Name: "Grace", Department: "Mechanical", Marks: 90 },
+  { Student_ID: "S108", Student_Name: "Hank", Department: "Civil", Marks: 70 }
+]);
+
+//. Display all Students Based on Their Departments Along with the Average Marks of a Particular Department
+db.Student_Data.aggregate([
+  { 
+    $group: {
+      _id: "$Department",  // Group by department
+      averageMarks: { $avg: "$Marks" },  // Calculate average marks for each department
+      students: { $push: { Student_ID: "$Student_ID", Student_Name: "$Student_Name", Marks: "$Marks" }}  // List students in the department
+    }
+  }
+]);
+
+
+
+// Display the Number of Students Associated with a Particular Department
+db.Student_Data.aggregate([
+  { 
+    $group: {
+      _id: "$Department",  // Group by department
+      numberOfStudents: { $sum: 1 }  // Count the number of students in each department
+    }
+  }
+]);
+//. Display List of Students with the Highest Marks in Each Department in Descending Order of Marks
+db.Student_Data.aggregate([
+  { 
+    $sort: { Marks: -1 }  // Sort students by Marks in descending order
+  },
+  { 
+    $group: {
+      _id: "$Department",  // Group by department
+      topStudent: { $first: { Student_ID: "$Student_ID", Student_Name: "$Student_Name", Marks: "$Marks" }}  // Get the highest marks student in each department
+    }
+  }
+]);
+
+
+//Create an Index on Field Student_ID : To create an index on the Student_ID field for fast lookups:
+db.Student_Data.createIndex({ Student_ID: 1 })
+
+
+//Create an Index on Fields Student_Name and Department
+
+To create a compound index on both Student_Name and Department fields:
+
+db.Student_Data.createIndex({ Student_Name: 1, Department: 1 })
+
+// Drop the Index on Field Student_ID
+To drop the index on the Student_ID field:
+
+db.Student_Data.dropIndex({ Student_ID: 1 })
+
+//Drop the Index on Fields Student_Name and Department
+To drop the compound index on Student_Name and Department:
+db.Student_Data.dropIndex({ Student_Name: 1, Department: 1 })
+
