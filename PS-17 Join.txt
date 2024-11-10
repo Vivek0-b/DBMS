@@ -1,0 +1,106 @@
+-- Create Locations Table
+CREATE TABLE Locations (
+    Location_id NUMBER PRIMARY KEY,
+    Street_address VARCHAR2(100),
+    Postal_code VARCHAR2(20),
+    City VARCHAR2(50),
+    State VARCHAR2(50),
+    Country_id VARCHAR2(10)
+);
+
+-- Create Departments Table
+CREATE TABLE Departments (
+    Department_id NUMBER PRIMARY KEY,
+    Department_name VARCHAR2(50),
+    Manager_id NUMBER,
+    Location_id NUMBER,
+    FOREIGN KEY (Location_id) REFERENCES Locations(Location_id)
+);
+
+-- Create Manager Table
+CREATE TABLE Manager (
+    Manager_id NUMBER PRIMARY KEY,
+    Manager_name VARCHAR2(50)
+);
+
+-- Create Employee Table
+CREATE TABLE Employee (
+    Employee_id NUMBER PRIMARY KEY,
+    First_name VARCHAR2(50),
+    Last_name VARCHAR2(50),
+    Hire_date DATE,
+    Salary NUMBER(10, 2),
+    Job_title VARCHAR2(50),
+    Manager_id NUMBER,
+    Department_id NUMBER,
+    FOREIGN KEY (Manager_id) REFERENCES Manager(Manager_id),
+    FOREIGN KEY (Department_id) REFERENCES Departments(Department_id)
+);
+-----------------------------------------------------------------------------------------------------------
+INSERT INTO Locations (Location_id, Street_address, Postal_code, City, State, Country_id) VALUES
+(1, '123 Main St', '12345', 'New York', 'NY', 'US');
+INSERT INTO Locations (Location_id, Street_address, Postal_code, City, State, Country_id) VALUES
+(2, '456 Oak St', '67890', 'San Francisco', 'CA', 'US');
+INSERT INTO Locations (Location_id, Street_address, Postal_code, City, State, Country_id) VALUES
+(3, '789 Pine Ave', '54321', 'Chicago', 'IL', 'US');
+INSERT INTO Departments (Department_id, Department_name, Manager_id, Location_id) VALUES
+(1, 'IT', 101, 1);
+INSERT INTO Departments (Department_id, Department_name, Manager_id, Location_id) VALUES
+(2, 'HR', 102, 2);
+INSERT INTO Departments (Department_id, Department_name, Manager_id, Location_id) VALUES
+(3, 'Finance', 103, 3);
+INSERT INTO Manager (Manager_id, Manager_name) VALUES
+(101, 'Alice Johnson');
+INSERT INTO Manager (Manager_id, Manager_name) VALUES
+(102, 'Bob Smith');
+INSERT INTO Manager (Manager_id, Manager_name) VALUES
+(103, 'Charlie Brown');
+INSERT INTO Employee (Employee_id, First_name, Last_name, Hire_date, Salary, Job_title, Manager_id, Department_id) VALUES
+(1, 'John', 'Doe', TO_DATE('2005-01-15', 'YYYY-MM-DD'), 80000, 'Software Engineer', 101, 1);
+INSERT INTO Employee (Employee_id, First_name, Last_name, Hire_date, Salary, Job_title, Manager_id, Department_id) VALUES
+(2, 'Jane', 'Smith', TO_DATE('2010-03-20', 'YYYY-MM-DD'), 50000, 'HR Specialist', 102, 2);
+INSERT INTO Employee (Employee_id, First_name, Last_name, Hire_date, Salary, Job_title, Manager_id, Department_id) VALUES
+(3, 'Sam', 'Brown', TO_DATE('2007-07-07', 'YYYY-MM-DD'), 75000, 'Financial Analyst', 103, 3);
+INSERT INTO Employee (Employee_id, First_name, Last_name, Hire_date, Salary, Job_title, Manager_id, Department_id) VALUES
+(4, 'Emma', 'Davis', TO_DATE('2012-05-12', 'YYYY-MM-DD'), 90000, 'IT Manager', 101, 1);
+INSERT INTO Employee (Employee_id, First_name, Last_name, Hire_date, Salary, Job_title, Manager_id, Department_id) VALUES
+(5, 'Michael', 'Clark', TO_DATE('2002-09-25', 'YYYY-MM-DD'), 120000, 'Senior Software Engineer', 101, 1);
+
+COMMIT;
+
+
+-----------------------------------------------------------------------------------------------------------
+
+SELECT e.First_name, e.Last_name, e.Salary
+FROM Employee e
+JOIN Departments d ON e.Department_id = d.Department_id
+WHERE e.Salary > (SELECT AVG(Salary) FROM Employee)
+  AND d.Department_name = 'IT';
+-----------------------------------------------------------------------------------------------------------
+SELECT e.First_name, e.Last_name, e.Salary
+FROM Employee e
+WHERE e.Salary = (SELECT MIN(Salary) FROM Employee);
+
+-----------------------------------------------------------------------------------------------------------
+
+SELECT e.Employee_id, e.First_name, e.Last_name, e.Salary
+FROM Employee e
+JOIN Departments d ON e.Department_id = d.Department_id
+WHERE e.Salary > (SELECT AVG(Salary) FROM Employee WHERE Department_id = e.Department_id);
+
+-----------------------------------------------------------------------------------------------------------
+
+SELECT d.Department_name, m.Manager_name, l.City
+FROM Departments d
+JOIN Manager m ON d.Manager_id = m.Manager_id
+JOIN Locations l ON d.Location_id = l.Location_id;
+
+-----------------------------------------------------------------------------------------------------------
+
+SELECT e.First_name, e.Last_name, e.Hire_date, e.Salary
+FROM Employee e
+JOIN Manager m ON e.Manager_id = m.Manager_id
+WHERE e.Job_title LIKE '%Manager%'
+  AND (SYSDATE - e.Hire_date) / 365 > 15;
+
+----------------

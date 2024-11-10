@@ -1,0 +1,115 @@
+-- Create Customer Table
+CREATE TABLE Customer (
+    CustID NUMBER PRIMARY KEY,
+    Name VARCHAR2(50),
+    Cust_Address VARCHAR2(100),
+    Phone_no VARCHAR2(15),
+    Email_ID VARCHAR2(50),
+    Age NUMBER
+);
+
+-- Create Branch Table
+CREATE TABLE Branch (
+    Branch_ID NUMBER PRIMARY KEY,
+    Branch_Name VARCHAR2(50),
+    Address VARCHAR2(100)
+);
+
+-- Create Account Table
+CREATE TABLE Account (
+    Account_no NUMBER PRIMARY KEY,
+    Branch_ID NUMBER,
+    CustID NUMBER,
+    date_open DATE,
+    Account_type VARCHAR2(20),
+    Balance NUMBER(10, 2),
+    FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+
+-- Inserting data into Customer Table
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) VALUES
+(1, 'Alice', 'Pune', '9876543210', 'alice@example.com', 30);
+
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) VALUES
+(2, 'Bob', 'Mumbai', '9123456789', 'bob@example.com', 45);
+
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) VALUES
+(3, 'Charlie', 'Pune', '9876549876', 'charlie@example.com', 32);
+
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) VALUES
+(4, 'David', 'Delhi', '9234567890', 'david@example.com', 50);
+
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) VALUES
+(5, 'Arun', 'Bangalore', '9345678901', 'arun@example.com', 28);
+
+COMMIT;
+-- Inserting data into Branch Table
+INSERT INTO Branch (Branch_ID, Branch_Name, Address) VALUES
+(1, 'Central', 'Pune');
+
+INSERT INTO Branch (Branch_ID, Branch_Name, Address) VALUES
+(2, 'West', 'Mumbai');
+
+INSERT INTO Branch (Branch_ID, Branch_Name, Address) VALUES
+(3, 'East', 'Delhi');
+
+COMMIT;
+-- Inserting data into Account Table
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance) VALUES
+(101, 1, 1, TO_DATE('2020-01-10', 'YYYY-MM-DD'), 'Saving Account', 75000);
+
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance) VALUES
+(102, 2, 2, TO_DATE('2021-05-20', 'YYYY-MM-DD'), 'Current Account', 20000);
+
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance) VALUES
+(103, 1, 3, TO_DATE('2022-03-15', 'YYYY-MM-DD'), 'Saving Account', 60000);
+
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance) VALUES
+(104, 3, 4, TO_DATE('2019-11-05', 'YYYY-MM-DD'), 'Fixed Deposit', 500000);
+
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance) VALUES
+(105, 2, 5, TO_DATE('2023-08-30', 'YYYY-MM-DD'), 'Saving Account', 15000);
+
+COMMIT;
+
+---------------------------------------------------------------------------------
+
+
+
+ALTER TABLE Customer MODIFY Email_ID VARCHAR2(20);
+
+---------------------------------------------------------------------------------
+ALTER TABLE Customer MODIFY Email_ID VARCHAR2(20) NOT NULL;
+---------------------------------------------------------------------------------
+
+SELECT COUNT(*) AS Total_Customers
+FROM Account
+WHERE Balance > 50000;
+---------------------------------------------------------------------------------
+
+SELECT AVG(Balance) AS Average_Balance
+FROM Account
+WHERE Account_type = 'Saving Account';
+---------------------------------------------------------------------------------
+
+    
+SELECT *
+FROM Customer
+WHERE Cust_Address = 'Pune' OR Name LIKE 'A%';
+---------------------------------------------------------------------------------
+
+CREATE TABLE Saving_Account AS
+SELECT Account_no, Branch_ID, CustID, date_open, Balance
+FROM Account
+WHERE Account_type = 'Saving Account';
+---------------------------------------------------------------------------------
+
+
+SELECT c.CustID, c.Name, c.Cust_Address, c.Phone_no, c.Email_ID, c.Age, a.Balance
+FROM Customer c
+JOIN Account a ON c.CustID = a.CustID
+WHERE a.Balance >= 20000
+ORDER BY c.Age;
+---------------------------------------------------------------------------------

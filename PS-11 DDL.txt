@@ -1,0 +1,75 @@
+
+-- Creating the Customer table
+CREATE TABLE Customer (
+    CustID NUMBER PRIMARY KEY,
+    Name VARCHAR2(100),
+    Cust_Address VARCHAR2(200),
+    Phone_no VARCHAR2(15),
+    Email_ID VARCHAR2(100),
+    Age NUMBER
+);
+
+-- Creating the Branch table
+CREATE TABLE Branch (
+    BranchID NUMBER PRIMARY KEY,
+    Branch_Name VARCHAR2(100),
+    Address VARCHAR2(200)
+);
+
+-- Creating the Account table
+CREATE TABLE Account (
+    Account_no NUMBER PRIMARY KEY,
+    BranchID NUMBER,
+    CustID NUMBER,
+    date_open DATE,
+    Account_type VARCHAR2(20),
+    Balance NUMBER(10, 2),
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+
+
+--------------------------------------------------------------------------------------------------
+
+-- Inserting data into Customer
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)
+VALUES (1, 'John Doe', '456 Elm St', '555-1234', 'john@example.com', 30);
+
+-- Inserting data into Branch
+INSERT INTO Branch (BranchID, Branch_Name, Address)
+VALUES (1, 'Downtown', '789 Oak St');
+
+-- Inserting data into Account
+INSERT INTO Account (Account_no, BranchID, CustID, date_open, Account_type, Balance)
+VALUES (1001, 1, 1, TO_DATE('01/01/2022', 'DD/MM/YYYY'), 'Savings', 5000.00);
+
+
+--------------------------------------------------------------------------------------------------
+
+-- Create an index on the date_open column if needed for faster querying
+CREATE INDEX idx_account_date_open ON Account(date_open);
+
+--------------------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW Customer_Info AS
+SELECT CustID, Name, Cust_Address, Phone_no, Email_ID, Age
+FROM Customer
+WHERE Age < 45;
+
+--------------------------------------------------------------------------------------------------
+UPDATE Account
+SET date_open = TO_DATE('16/04/2017', 'DD/MM/YYYY')
+WHERE CustID IN (SELECT CustID FROM Customer_Info);
+
+--------------------------------------------------------------------------------------------------
+CREATE SEQUENCE Branch_seq
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+--------------------------------------------------------------------------------------------------
+INSERT INTO Branch (BranchID, Branch_Name, Address)
+VALUES (Branch_seq.NEXTVAL, 'Central', '123 Main St');
+
+--------------------------------------------------------------------------------------------------
+CREATE SYNONYM Branch_info FOR Branch;
