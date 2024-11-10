@@ -1,0 +1,236 @@
+db.Movies_Data.insertMany([
+  { Movie_ID: "M101", Movie_Name: "Inception", Director: "Christopher Nolan", Genre: "Sci-Fi", BoxOfficeCollection: 830 },
+  { Movie_ID: "M102", Movie_Name: "Interstellar", Director: "Christopher Nolan", Genre: "Sci-Fi", BoxOfficeCollection: 677 },
+  { Movie_ID: "M103", Movie_Name: "The Dark Knight", Director: "Christopher Nolan", Genre: "Action", BoxOfficeCollection: 1005 },
+  { Movie_ID: "M104", Movie_Name: "The Prestige", Director: "Christopher Nolan", Genre: "Drama", BoxOfficeCollection: 110 },
+  { Movie_ID: "M105", Movie_Name: "Titanic", Director: "James Cameron", Genre: "Romance", BoxOfficeCollection: 2187 },
+  { Movie_ID: "M106", Movie_Name: "Avatar", Director: "James Cameron", Genre: "Sci-Fi", BoxOfficeCollection: 2788 },
+  { Movie_ID: "M107", Movie_Name: "The Terminator", Director: "James Cameron", Genre: "Action", BoxOfficeCollection: 78 },
+  { Movie_ID: "M108", Movie_Name: "Jurassic Park", Director: "Steven Spielberg", Genre: "Action", BoxOfficeCollection: 1070 }
+]);
+
+
+
+To create a collection Movies_Data, insert some sample movie records, and solve the required queries with indexing and dropping indexes, follow the step-by-step process below.
+
+Step-by-Step Process for MongoDB Shell
+Step 1: Start MongoDB Server
+Ensure that your MongoDB server is running by executing the following command in your terminal:
+
+bash
+Copy code
+mongod
+Leave this terminal window open to keep the MongoDB server running.
+
+Step 2: Open MongoDB Shell
+Open a new terminal and connect to MongoDB by running:
+
+bash
+Copy code
+mongo
+This will open the MongoDB shell where you can execute your queries.
+
+Step 3: Create the Database and Collection
+Now, let’s create a database called MoviesDB and a collection called Movies_Data within that database.
+
+Switch to the MoviesDB database:
+javascript
+Copy code
+use MoviesDB
+Insert sample data into the Movies_Data collection. This data will contain fields like Movie_ID, Movie_Name, Director, Genre, and BoxOfficeCollection.
+Step 4: Insert Sample Data into Movies_Data Collection
+Execute the following command to insert some sample movie documents:
+
+javascript
+Copy code
+db.Movies_Data.insertMany([
+  { Movie_ID: "M101", Movie_Name: "Inception", Director: "Christopher Nolan", Genre: "Sci-Fi", BoxOfficeCollection: 830 },
+  { Movie_ID: "M102", Movie_Name: "Interstellar", Director: "Christopher Nolan", Genre: "Sci-Fi", BoxOfficeCollection: 677 },
+  { Movie_ID: "M103", Movie_Name: "The Dark Knight", Director: "Christopher Nolan", Genre: "Action", BoxOfficeCollection: 1005 },
+  { Movie_ID: "M104", Movie_Name: "The Prestige", Director: "Christopher Nolan", Genre: "Drama", BoxOfficeCollection: 110 },
+  { Movie_ID: "M105", Movie_Name: "Titanic", Director: "James Cameron", Genre: "Romance", BoxOfficeCollection: 2187 },
+  { Movie_ID: "M106", Movie_Name: "Avatar", Director: "James Cameron", Genre: "Sci-Fi", BoxOfficeCollection: 2788 },
+  { Movie_ID: "M107", Movie_Name: "The Terminator", Director: "James Cameron", Genre: "Action", BoxOfficeCollection: 78 },
+  { Movie_ID: "M108", Movie_Name: "Jurassic Park", Director: "Steven Spielberg", Genre: "Action", BoxOfficeCollection: 1070 }
+]);
+
+
+1. Display a List Stating How Many Movies Are Directed by Each Director
+db.Movies_Data.aggregate([
+  { 
+    $group: {
+      _id: "$Director",  // Group by Director
+      movieCount: { $sum: 1 }  // Count the number of movies per director
+    }
+  }
+]);
+
+2. Display List of Movies with the Highest BoxOfficeCollection in Each Genre
+db.Movies_Data.aggregate([
+  { 
+    $sort: { BoxOfficeCollection: -1 }  // Sort by BoxOfficeCollection in descending order
+  },
+  { 
+    $group: {
+      _id: "$Genre",  // Group by Genre
+      topMovie: { $first: { Movie_ID: "$Movie_ID", Movie_Name: "$Movie_Name", BoxOfficeCollection: "$BoxOfficeCollection" }}  // Get the highest BoxOfficeCollection movie in each genre
+    }
+  }
+]);
+
+3. Display List of Movies with the Highest BoxOfficeCollection in Each Genre in Ascending Order of BoxOfficeCollection
+db.Movies_Data.aggregate([
+  { 
+    $group: {
+      _id: "$Genre",  // Group by Genre
+      topMovie: { $max: "$BoxOfficeCollection" }  // Get the highest BoxOfficeCollection in each genre
+    }
+  },
+  { 
+    $sort: { "topMovie": 1 }  // Sort by highest BoxOfficeCollection in ascending order
+  }
+]);
+
+4. Create an Index on Field Movie_ID
+db.Movies_Data.createIndex({ Movie_ID: 1 })
+
+5. Create an Index on Fields Movie_Name and Director
+db.Movies_Data.createIndex({ Movie_Name: 1, Director: 1 })
+
+6. Drop the Index on Field Movie_ID
+db.Movies_Data.dropIndex({ Movie_ID: 1 })
+
+7. Drop the Index on Fields Movie_Name and Director
+db.Movies_Data.dropIndex({ Movie_Name: 1, Director: 1 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------
+
+test> use MoviesDB
+switched to db MoviesDB
+MoviesDB> db.Movies_Data.insertMany([
+...   { Movie_ID: "M101", Movie_Name: "Inception", Director: "Christopher Nolan", Genre: "Sci-Fi", B
+oxOfficeCollection: 830 },
+...   { Movie_ID: "M102", Movie_Name: "Interstellar", Director: "Christopher Nolan", Genre: "Sci-Fi", BoxOfficeCollection: 677 },
+...   { Movie_ID: "M103", Movie_Name: "The Dark Knight", Director: "Christopher Nolan", Genre: "Acti
+on", BoxOfficeCollection: 1005 },
+...   { Movie_ID: "M104", Movie_Name: "The Prestige", Director: "Christopher Nolan", Genre: "Drama",
+ BoxOfficeCollection: 110 },
+...   { Movie_ID: "M105", Movie_Name: "Titanic", Director: "James Cameron", Genre: "Romance", BoxOfficeCollection: 2187 },
+...   { Movie_ID: "M106", Movie_Name: "Avatar", Director: "James Cameron", Genre: "Sci-Fi", BoxOfficeCollection: 2788 },
+...   { Movie_ID: "M107", Movie_Name: "The Terminator", Director: "James Cameron", Genre: "Action", BoxOfficeCollection: 78 },
+...   { Movie_ID: "M108", Movie_Name: "Jurassic Park", Director: "Steven Spielberg", Genre: "Action", BoxOfficeCollection: 1070 }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6730c766a2975a44390d8190'),
+    '1': ObjectId('6730c766a2975a44390d8191'),
+    '2': ObjectId('6730c766a2975a44390d8192'),
+    '3': ObjectId('6730c766a2975a44390d8193'),
+    '4': ObjectId('6730c766a2975a44390d8194'),
+    '5': ObjectId('6730c766a2975a44390d8195'),
+    '6': ObjectId('6730c766a2975a44390d8196'),
+    '7': ObjectId('6730c766a2975a44390d8197')
+  }
+}
+MoviesDB> db.Movies_Data.aggregate([
+...   {
+...     $group: {
+...       _id: "$Director",  // Group by Director
+...       movieCount: { $sum: 1 }  // Count the number of movies per director
+...     }
+...   }
+... ]);
+[
+  { _id: 'Christopher Nolan', movieCount: 4 },
+  { _id: 'James Cameron', movieCount: 3 },
+  { _id: 'Steven Spielberg', movieCount: 1 }
+]
+MoviesDB> db.Movies_Data.aggregate([
+...   {
+...     $sort: { BoxOfficeCollection: -1 }  // Sort by BoxOfficeCollection in descending order
+...   },
+...   {
+...     $group: {
+...       _id: "$Genre",  // Group by Genre
+...       topMovie: { $first: { Movie_ID: "$Movie_ID", Movie_Name: "$Movie_Name", BoxOfficeCollection: "$BoxOfficeCollection" }}  // Get the highest BoxOfficeCollection movie in each genre
+...     }
+...   }
+... ]);
+[
+  {
+    _id: 'Romance',
+    topMovie: {
+      Movie_ID: 'M105',
+      Movie_Name: 'Titanic',
+      BoxOfficeCollection: 2187
+    }
+  },
+  {
+    _id: 'Sci-Fi',
+    topMovie: {
+      Movie_ID: 'M106',
+      Movie_Name: 'Avatar',
+      BoxOfficeCollection: 2788
+    }
+  },
+  {
+    _id: 'Action',
+    topMovie: {
+      Movie_ID: 'M108',
+      Movie_Name: 'Jurassic Park',
+      BoxOfficeCollection: 1070
+    }
+  },
+  {
+    _id: 'Drama',
+    topMovie: {
+      Movie_ID: 'M104',
+      Movie_Name: 'The Prestige',
+      BoxOfficeCollection: 110
+    }
+  }
+]
+MoviesDB> db.Movies_Data.aggregate([
+...   {
+...     $group: {
+...       _id: "$Genre",  // Group by Genre
+...       topMovie: { $max: "$BoxOfficeCollection" }  // Get the highest BoxOfficeCollection in each genre
+...     }
+...   },
+...   {
+...     $sort: { "topMovie": 1 }  // Sort by highest BoxOfficeCollection in ascending order
+...   }
+... ]);
+[
+  { _id: 'Drama', topMovie: 110 },
+  { _id: 'Action', topMovie: 1070 },
+  { _id: 'Romance', topMovie: 2187 },
+  { _id: 'Sci-Fi', topMovie: 2788 }
+]
+MoviesDB> db.Movies_Data.createIndex({ Movie_ID: 1 })
+Movie_ID_1
+MoviesDB> db.Movies_Data.createIndex({ Movie_Name: 1, Director: 1 })
+Movie_Name_1_Director_1
+MoviesDB> db.Movies_Data.dropIndex({ Movie_ID: 1 })
+{ nIndexesWas: 3, ok: 1 }
+MoviesDB> db.Movies_Data.dropIndex({ Movie_Name: 1, Director: 1 })
+{ nIndexesWas: 2, ok: 1 }
+MoviesDB>
