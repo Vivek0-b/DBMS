@@ -16,30 +16,23 @@ COMMIT;
 ----------------------------------------------------------------------------------------------------------------------
 
 
-DECLARE
-    -- Declare an explicit cursor
-    CURSOR emp_cursor IS
-        SELECT Emp_id, Emp_Name, Salary FROM Employee WHERE Salary > 50000;
+set serveroutput on;
+Declare
+    cursor display is select emp_id,emp_name,salary from employee where salary >50000;     --declare cursor
     v_emp_id Employee.Emp_id%TYPE;
     v_emp_name Employee.Emp_Name%TYPE;
     v_salary Employee.Salary%TYPE;
-BEGIN
-    -- Open the cursor
-    OPEN emp_cursor;
-    
-    -- Loop through the cursor and fetch records
-    LOOP
-        FETCH emp_cursor INTO v_emp_id, v_emp_name, v_salary;
-        EXIT WHEN emp_cursor%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Emp_id: ' || v_emp_id || 
-                             ', Name: ' || v_emp_name || 
-                             ', Salary: ' || v_salary);
-    END LOOP;
-    
-    -- Close the cursor
-    CLOSE emp_cursor;
-END;
-/
+
+    BEGIN
+        open display;                              --open cursor
+        loop                                                --fetch data of the next row of cursor  into these variable 
+            FETCH display into v_emp_id,v_emp_name,v_salary;
+            EXIT when display%notfound;
+            DBMS_OUTPUT.PUT_LINE('Emp_id: ' || v_emp_id || ', Name: ' || v_emp_name || ', Salary: ' || v_salary);
+        END loop;
+        
+        close display;
+end;
 ------------------------------------------------------------------------------------------------------------------
 
 DECLARE
@@ -55,7 +48,7 @@ DECLARE
     CURSOR emp_salary_cursor (p_emp_id NUMBER) IS
         SELECT Salary FROM Employee WHERE Emp_id = p_emp_id;
     v_salary Employee.Salary%TYPE;
-    v_emp_id NUMBER;
+    v_emp_id NUMBER;    
 BEGIN
     -- Get the employee ID from the user
     v_emp_id := &Enter_Employee_ID;
@@ -65,11 +58,11 @@ BEGIN
     FETCH emp_salary_cursor INTO v_salary;
     
     -- Check if the record was found
-    IF emp_salary_cursor%FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Salary of Employee with ID ' || v_emp_id || ' is: ' || v_salary);
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('No employee found with ID ' || v_emp_id);
-    END IF;
+        IF emp_salary_cursor%FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Salary of Employee with ID ' || v_emp_id || ' is: ' || v_salary);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('No employee found with ID ' || v_emp_id);
+        END IF;
 
     -- Close the cursor
     CLOSE emp_salary_cursor;
