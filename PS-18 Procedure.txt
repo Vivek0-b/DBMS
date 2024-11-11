@@ -10,8 +10,7 @@ CREATE TABLE Account (
 CREATE TABLE Earned_Interest (
     Account_No NUMBER,
     Interest_Amt NUMBER(10, 2),
-    CONSTRAINT fk_account FOREIGN KEY (Account_No) REFERENCES Account(Account_No)
-);
+    );
 
 
 
@@ -30,12 +29,9 @@ VALUES (104, 'David Lee', 32000, 1);
 
 COMMIT;
 
+-------------------------------------------------------------------------------------------------------------------------
 
-
-CREATE OR REPLACE PROCEDURE calculate_interest (
-    p_account_no IN NUMBER,
-    p_interest_rate IN NUMBER
-) IS
+CREATE OR REPLACE PROCEDURE calculate_interest (v_account_no IN NUMBER,v_interest_rate IN NUMBER) IS
     v_balance NUMBER;
     v_years NUMBER;
     v_interest_amt NUMBER;
@@ -43,14 +39,14 @@ BEGIN
     -- Fetch balance and years for the given account number
     SELECT Balance, NoOfYears INTO v_balance, v_years
     FROM Account
-    WHERE Account_No = p_account_no;
+    WHERE Account_No = v_account_no;
 
     -- Calculate simple interest
-    v_interest_amt := v_balance * (p_interest_rate / 100) * v_years;
+    v_interest_amt := v_balance * (v_interest_rate / 100) * v_years;
 
     -- Insert the calculated interest into the Earned_Interest table
     INSERT INTO Earned_Interest (Account_No, Interest_Amt)
-    VALUES (p_account_no, v_interest_amt);
+    VALUES (v_account_no, v_interest_amt);
 
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('Interest calculated and stored successfully.');
@@ -76,40 +72,23 @@ END;
 
 -------------------------------------------------------------------------------------------------------------------------
 
-
-CREATE OR REPLACE FUNCTION get_high_balance_accounts 
-RETURN SYS_REFCURSOR IS
-    v_refcursor SYS_REFCURSOR;
-BEGIN
-    OPEN v_refcursor FOR
-    SELECT * FROM Account WHERE Balance > 50000;
-    RETURN v_refcursor;
-END;
-/
-
-
-
-
-
+create or replace function get_high_balance_accounts
+return varchar is
+result varchar(5000);
+begin
+    for acc in (select account_no,cust_name,balance,noofyears from account where balance >50000 ) loop
+    result := result ||'Account number is: '||acc.account_no||'Customer name is:'||acc.cust_name||'Balance is: '||acc.balance||'No of years are: '||acc.noofyears;
+    end loop;
+    return result;
+end;
 set serveroutput on;
 DECLARE
-    v_cursor SYS_REFCURSOR;
-    v_account_no NUMBER;
-    v_cust_name VARCHAR2(50);
-    v_balance NUMBER;
-    v_years NUMBER;
+    result VARCHAR2(4000);
 BEGIN
-    v_cursor := get_high_balance_accounts;
-
-    LOOP
-        FETCH v_cursor INTO v_account_no, v_cust_name, v_balance, v_years;
-        EXIT WHEN v_cursor%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Account No: ' || v_account_no || 
-                             ', Name: ' || v_cust_name || 
-                             ', Balance: ' || v_balance || 
-                             ', Years: ' || v_years);
-    END LOOP;
-
-    CLOSE v_cursor;
+    -- Call the function to get accounts with balance > 50,000
+    result := get_high_balance_accounts;
+    
+    -- Output the result to the console
+    DBMS_OUTPUT.PUT_LINE(result);
 END;
 /
