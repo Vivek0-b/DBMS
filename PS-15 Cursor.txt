@@ -76,36 +76,23 @@ end;
 --------------------------------------------------------------------------------------------------------------
 
 
-
-DECLARE
-    -- Declare an explicit cursor
-    CURSOR expensive_products IS
-        SELECT Product_id, Product_Name, Product_Type, Price
-        FROM Products
-        WHERE Price > 5000;
-    
+declare
+    cursor display is select product_id,product_name,product_type,price from products where price >5000;
     v_product_id Products.Product_id%TYPE;
     v_product_name Products.Product_Name%TYPE;
-    v_product_type Products.Product_Type%TYPE;
     v_price Products.Price%TYPE;
-BEGIN
-    -- Open the cursor
-    OPEN expensive_products;
-
-    -- Loop through the cursor and fetch records
-    LOOP
-        FETCH expensive_products INTO v_product_id, v_product_name, v_product_type, v_price;
-        EXIT WHEN expensive_products%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Product ID: ' || v_product_id || 
-                             ', Name: ' || v_product_name || 
-                             ', Type: ' || v_product_type || 
-                             ', Price: ' || v_price);
+    v_product_type Products.Product_type%TYPE;
+    
+begin 
+    open display;
+    loop
+        fetch display into v_product_id ,v_product_name,v_product_type,v_price ;
+        exit when display%notfound;
+        dbms_output.put_line('Product ID: ' || v_product_id ||  ', Name: ' || v_product_name || ', Type: ' || v_product_type || ', Price: ' || v_price);
     END LOOP;
-
-    -- Close the cursor
-    CLOSE expensive_products;
-END;
-/
+    
+    close display;
+    end;
 
 ----------------------------------------------------------------------------------------------------------------------
 
