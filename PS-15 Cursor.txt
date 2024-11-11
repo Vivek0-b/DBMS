@@ -50,6 +50,29 @@ BEGIN
     CLOSE product_cursor;
 END;
 /
+
+
+Set serveroutput on;
+declare 
+    cursor display(min_p in number,max_p in number) is select product_id,product_name,price from products where product_type='apparel' and price between min_p and max_p ;
+    v_product_id Products.Product_id%TYPE;
+    v_product_name Products.Product_Name%TYPE;
+    v_price Products.Price%TYPE;
+    v_min_p NUMBER;
+    v_max_p NUMBER;
+BEGIN
+    v_min_p:=&enter_minimum_price;
+    v_max_p:=&enter_maximum_price;
+    open display(v_min_p,v_max_p);
+    loop
+        fetch display into v_product_id,v_product_name,v_price;
+            exit when display%notfound;
+            dbms_output.put_line('Product ID: ' || v_product_id || ', Name: ' || v_product_name || ', Price: ' || v_price);
+    end loop;
+    close display;        
+end;
+            
+
 --------------------------------------------------------------------------------------------------------------
 
 
