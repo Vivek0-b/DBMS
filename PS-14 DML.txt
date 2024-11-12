@@ -1,31 +1,9 @@
--- Create Customer Table
-CREATE TABLE Customer (
-    CustID NUMBER PRIMARY KEY,
-    Name VARCHAR2(50),
-    Cust_Address VARCHAR2(100),
-    Phone_no VARCHAR2(15),
-    Email_ID VARCHAR2(50),
-    Age NUMBER
-);
+create table Customer (CustID number, Name varchar(50), Cust_Address varchar(50), Phone_no number, Email_ID varchar(50), Age number);
+create table Branch (Branch_ID number, Branch_Name varchar(50), Address varchar(50));
+create table Account (Account_no number, Branch_ID number, CustID number, date_open date, Account_type varchar(50), Balance number);
 
--- Create Branch Table
-CREATE TABLE Branch (
-    Branch_ID NUMBER PRIMARY KEY,
-    Branch_Name VARCHAR2(50),
-    Address VARCHAR2(100)
-);
 
--- Create Account Table
-CREATE TABLE Account (
-    Account_no NUMBER PRIMARY KEY,
-    Branch_ID NUMBER,
-    CustID NUMBER,
-    date_open DATE,
-    Account_type VARCHAR2(20),
-    Balance NUMBER(10, 2),
-    FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
-    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
-);
+-- Inserting data into Customer Table
 
 
 -- Inserting data into Customer Table
