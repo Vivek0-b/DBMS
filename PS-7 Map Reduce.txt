@@ -1,121 +1,57 @@
-
-test> use LibraryDB
-switched to db LibraryDB
-LibraryDB> db.Book.insertMany([
-...   { Title: "The Alchemist", Author_name: "Paulo Coelho", Borrowed_status: true, Price: 350 },
-...   { Title: "Harry Potter", Author_name: "J.K. Rowling", Borrowed_status: false, Price: 400 },
-...   { Title: "The Great Gatsby", Author_name: "F. Scott Fitzgerald", Borrowed_status: true, Price: 280 },
-...   { Title: "To Kill a Mockingbird", Author_name: "Harper Lee", Borrowed_status: false, Price: 320 },
-...   { Title: "1984", Author_name: "George Orwell", Borrowed_status: true, Price: 450 },
-...   { Title: "Animal Farm", Author_name: "George Orwell", Borrowed_status: false, Price: 150 },
-...   { Title: "Brida", Author_name: "Paulo Coelho", Borrowed_status: true, Price: 330 },
-...   { Title: "The Catcher in the Rye", Author_name: "J.D. Salinger", Borrowed_status: false, Price: 270 }
+db.Book.insertMany([
+...     { Title: "Book1", Author_name: "Author1", Borrowed_status: true, Price: 350 },
+...     { Title: "Book2", Author_name: "Author2", Borrowed_status: false, Price: 150 },
+...     { Title: "Book3", Author_name: "Author1", Borrowed_status: true, Price: 400 },
+...     { Title: "Book4", Author_name: "Author3", Borrowed_status: false, Price: 500 },
+...     { Title: "Book5", Author_name: "Author2", Borrowed_status: true, Price: 200 },
+...     { Title: "Book6", Author_name: "Author1", Borrowed_status: true, Price: 300 }
 ... ]);
 
 
+
+
+var mapFunction1= function() {emit(this.Author_name, this.Title);};
+var reduceFunction1= function(key,values) {return values;};
+db.Book.mapReduce(mapFunction1, reduceFunction1, {out: "authorwise"});
+db.authorwise.find().pretty();
+
+
+
+
+
+
+
+
+
+
+
+
 LibraryDB> db.Book.mapReduce(
-...   function() {
-...     emit(this.Author_name, this.Title);  // Map function: emit the author name as the key and the book title as the value.
-...   },
-...   function(key, values) {
-...     return values;  // Reduce function: return the list of books.
-...   },
-...   {
-...     out: "author_books_list"  // Output collection name
-...   }
-... );
-DeprecationWarning: Collection.mapReduce() is deprecated. Use an aggregation instead.
-See https://docs.mongodb.com/manual/core/map-reduce for details.
-{ result: 'author_books_list', ok: 1 }
-LibraryDB>
+...   function() {if (this.Borrowed_status === true) { .emit(this.Author_name, this.Title);}},
+...   function(key, values) {return values;  },
+...   { out: "borrowed_books_by_author" });
+ db.borrowed_books_by_author.find().pretty();
 
-LibraryDB> // Display the result
 
-LibraryDB> db.author_books_list.find().pretty();
-[
-  { _id: 'Harper Lee', value: [ 'To Kill a Mockingbird' ] },
-  { _id: 'George Orwell', value: [ 'Animal Farm', '1984' ] },
-  { _id: 'J.D. Salinger', value: [ 'The Catcher in the Rye' ] },
-  { _id: 'F. Scott Fitzgerald', value: [ 'The Great Gatsby' ] },
-  { _id: 'J.K. Rowling', value: [ 'Harry Potter' ] },
-  { _id: 'Paulo Coelho', value: [ 'Brida', 'The Alchemist' ] }
-]
-LibraryDB> db.Book.mapReduce(
-...   function() {
-...     if (this.Borrowed_status === true) {  // Only process books with Borrowed_status = true.
-...       emit(this.Author_name, this.Title);  // Emit author name as key, book title as value.
-...     }
-...   },
-...   function(key, values) {
-...     return values;  // Return the list of books.
-...   },
-...   {
-...     out: "borrowed_books_by_author"  // Output collection name
-...   }
-... );
-{ result: 'borrowed_books_by_author', ok: 1 }
-LibraryDB>
+//db.Book.mapReduce(   function() {if (this.Borrowed_status === true) { emit(this.Author_name, this.Title);}}, function(key, values) {return values;  }, { out: "borrowed_books_by_author" }); db.borrowed_books_by_author.find().pretty();
 
-LibraryDB> // Display the result
 
-LibraryDB> db.borrowed_books_by_author.find().pretty();
-[
-  { _id: 'Paulo Coelho', value: [ 'Brida', 'The Alchemist' ] },
-  { _id: 'F. Scott Fitzgerald', value: [ 'The Great Gatsby' ] },
-  { _id: 'George Orwell', value: [ '1984' ] }
-]
-LibraryDB> db.Book.mapReduce(
-...   function() {
-...     if (this.Price > 300) {  // Only process books with price greater than 300.
-...       emit(this.Author_name, this.Title);  // Emit author name as key, book title as value.
-...     }
-...   },
-...   function(key, values) {
-...     return values;  // Return the list of books.
-...   },
-...   {
-...     out: "books_price_above_300"  // Output collection name
-...   }
-... );
-{ result: 'books_price_above_300', ok: 1 }
-LibraryDB>
 
-LibraryDB> // Display the result
 
+
+
+
+
+
+
+db.Book.mapReduce(function() {if (this.Price > 300) {   emit(this.Author_name, this.Title); }},function(key, values) { return values;  },{out: "books_price_above_300"   });
 LibraryDB> db.books_price_above_300.find().pretty();
-[
-  { _id: 'Harper Lee', value: [ 'To Kill a Mockingbird' ] },
-  { _id: 'J.K. Rowling', value: [ 'Harry Potter' ] },
-  { _id: 'Paulo Coelho', value: [ 'Brida', 'The Alchemist' ] },
-  { _id: 'George Orwell', value: [ '1984' ] }
-]
-
-
-
-
-
-
-
 
 
 
 
 
 -------------------------------------------------------------------------------------------------------------------------
-
-
-db.Book.insertMany([
-  { Title: "The Alchemist", Author_name: "Paulo Coelho", Borrowed_status: true, Price: 350 },
-  { Title: "Harry Potter", Author_name: "J.K. Rowling", Borrowed_status: false, Price: 400 },
-  { Title: "The Great Gatsby", Author_name: "F. Scott Fitzgerald", Borrowed_status: true, Price: 280 },
-  { Title: "To Kill a Mockingbird", Author_name: "Harper Lee", Borrowed_status: false, Price: 320 },
-  { Title: "1984", Author_name: "George Orwell", Borrowed_status: true, Price: 450 },
-  { Title: "Animal Farm", Author_name: "George Orwell", Borrowed_status: false, Price: 150 },
-  { Title: "Brida", Author_name: "Paulo Coelho", Borrowed_status: true, Price: 330 },
-  { Title: "The Catcher in the Rye", Author_name: "J.D. Salinger", Borrowed_status: false, Price: 270 }
-]);
-
-
 
 
 
