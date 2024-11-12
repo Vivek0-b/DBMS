@@ -34,6 +34,16 @@ db.Student_Data.aggregate([
     }
   }
 ]);
+
+db.Student_Data.aggregate([{$group: { _id: "$Department", numberofstudent: {$sum: 1}}}]);
+
+
+
+
+
+
+
+
 //. Display List of Students with the Highest Marks in Each Department in Descending Order of Marks
 db.Student_Data.aggregate([
   { 
