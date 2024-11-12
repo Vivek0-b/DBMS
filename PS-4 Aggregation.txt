@@ -22,7 +22,7 @@ db.Student_Data.aggregate([
     }
   }
 ]);
-
+db.Student_Data.aggregate([ { $group: { _id: "$Department", averageMarks: { $avg: "$Marks" }, students: { $push: { Student_ID: "$Student_ID", Student_Name: "$Student_Name", Marks: "$Marks" } } } }] );
 
 
 // Display the Number of Students Associated with a Particular Department
