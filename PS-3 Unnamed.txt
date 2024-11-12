@@ -75,3 +75,38 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
 END;
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+create table Employee( emp_id varchar(50), dept_id number, emp_name varchar(50), DoJ date , salary number, commission number,job_title varchar(50));
+create table Salary_Increment(emp_id number , new_salary number);
+set serveroutput on;
+DECLARE
+    v_emp_id number :=&emp_id;
+    v_new_salary number;
+    v_salary number;
+    v_experience number;
+    v_doj date;
+    v_commission_rate number;
+    employee_not_found exception;
+begin 
+    select doj,salary into v_doj, v_salary from employee where v_emp_id=emp_id;
+   v_experience := TRUNC(MONTHS_BETWEEN(SYSDATE, v_doj) / 12);
+    
+    if v_experience >10 then 
+    v_commission_rate:= 0.20;
+    elsif v_experience >5 then 
+    v_commission_rate:= 0.10;
+    else  
+    v_commission_rate:= 0.05;
+    end if;
+    
+    v_new_salary:=v_salary*(1+v_commission_rate);
+    insert into salary_increment(emp_id,new_salary) values (v_emp_id,v_new_salary);
+    
+    DBMS_OUTPUT.PUT_LINE('New salary for Employee ' || v_emp_id || ' is: ' || v_new_salary);
+    
+END;
