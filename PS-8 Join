@@ -1,41 +1,7 @@
-CREATE TABLE Employee (
-    Employee_id NUMBER PRIMARY KEY,                -- Primary key for employee id
-    First_name VARCHAR2(50),                        -- Employee first name
-    Last_name VARCHAR2(50),                         -- Employee last name
-    Hire_date DATE,                                 -- Hire date of employee
-    Salary NUMBER,                                  -- Employee salary
-    Job_title VARCHAR2(50),                         -- Employee job title
-    Manager_id NUMBER,                              -- Manager's Employee ID (foreign key)
-    Department_id NUMBER,                           -- Department ID the employee belongs to (foreign key)
-    CONSTRAINT fk_manager FOREIGN KEY (Manager_id) REFERENCES Employee(Employee_id), -- Manager is another employee
-    CONSTRAINT fk_department FOREIGN KEY (Department_id) REFERENCES Departments(Department_id) -- Department of the employee
-);
-
--- Create Departments table
-CREATE TABLE Departments (
-    Department_id NUMBER PRIMARY KEY,               -- Primary key for department id
-    Department_name VARCHAR2(50),                    -- Name of the department
-    Manager_id NUMBER,                               -- Manager for the department (foreign key)
-    Location_id NUMBER,                              -- Location ID of the department (foreign key)
-    CONSTRAINT fk_manager_dept FOREIGN KEY (Manager_id) REFERENCES Manager(Manager_id), -- Department manager (references Manager table)
-    CONSTRAINT fk_location FOREIGN KEY (Location_id) REFERENCES Locations(location_id) -- Department location (references Locations table)
-);
-
--- Create Locations table
-CREATE TABLE Locations (
-    Location_id NUMBER PRIMARY KEY,                  -- Primary key for location id
-    Street_address VARCHAR2(100),                    -- Street address of the location
-    Postal_code VARCHAR2(20),                        -- Postal code of the location
-    City VARCHAR2(50),                               -- City of the location
-    State VARCHAR2(50),                              -- State of the location
-    Country_id VARCHAR2(20)                          -- Country ID where the location is based
-);
-
--- Create Manager table
-CREATE TABLE Manager (
-    Manager_id NUMBER PRIMARY KEY,                   -- Primary key for manager id
-    Manager_name VARCHAR2(50)                        -- Name of the manager
-);
+create table Employee(Employee_id number, First_name varchar(50), last_name varchar(50) , hire_date date, salary number, Job_title varchar(50), manager_id number, department_id number);
+create table Departments(Department_id number, Department_name varchar(50), Manager_id number, Location_id varchar(50));
+create table Locations(location_id  number,street_address  varchar(50),postal_code varchar(50), city varchar(50), state varchar(50), country_id varchar(50));
+create table Manager (Manager_id number, Manager_name varchar(50));
 
 -- Step 2: Insert Sample Data into the Tables
 
