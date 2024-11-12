@@ -56,6 +56,15 @@ db.Student_Data.aggregate([
     }
   }
 ]);
+db.Student_Data.aggregate([{$sort: {Marks: -1}},{$group: {_id: "$Department",topper: {$first: {Student_ID: "$Student_ID", Student_Name: "$Student_Name", Marks: "$Marks"}} }}]);
+
+
+
+
+
+
+
+
 
 
 //Create an Index on Field Student_ID : To create an index on the Student_ID field for fast lookups:
