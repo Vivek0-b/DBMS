@@ -11,19 +11,8 @@ LibraryDB> db.Book.insertMany([
 ...   { Title: "Brida", Author_name: "Paulo Coelho", Borrowed_status: true, Price: 330 },
 ...   { Title: "The Catcher in the Rye", Author_name: "J.D. Salinger", Borrowed_status: false, Price: 270 }
 ... ]);
-{
-  acknowledged: true,
-  insertedIds: {
-    '0': ObjectId('6730c22696de06cd720d8190'),
-    '1': ObjectId('6730c22696de06cd720d8191'),
-    '2': ObjectId('6730c22696de06cd720d8192'),
-    '3': ObjectId('6730c22696de06cd720d8193'),
-    '4': ObjectId('6730c22696de06cd720d8194'),
-    '5': ObjectId('6730c22696de06cd720d8195'),
-    '6': ObjectId('6730c22696de06cd720d8196'),
-    '7': ObjectId('6730c22696de06cd720d8197')
-  }
-}
+
+
 LibraryDB> db.Book.mapReduce(
 ...   function() {
 ...     emit(this.Author_name, this.Title);  // Map function: emit the author name as the key and the book title as the value.
