@@ -33,10 +33,10 @@ INSERT INTO Branch VALUES (2, 'East Branch', 'Delhi');
 INSERT INTO Branch VALUES (3, 'West Branch', 'Chennai');
 
 -- Insert data into Account table
-INSERT INTO Account VALUES (1001, 1, 101, TO_DATE('16-08-2018', 'DD-MM-YYYY'), 'Savings', 15000);
-INSERT INTO Account VALUES (1002, 2, 102, TO_DATE('16-02-2018', 'DD-MM-YYYY'), 'Loan', 250000);
-INSERT INTO Account VALUES (1003, 3, 103, TO_DATE('16-08-2018', 'DD-MM-YYYY'), 'Savings', 20000);
-INSERT INTO Account VALUES (1004, 1, 104, TO_DATE('16-02-2018', 'DD-MM-YYYY'), 'Loan', 100000);
+INSERT INTO Account VALUES (1001, 1, 101, '16-08-2018', 'Savings', 15000);
+INSERT INTO Account VALUES (1002, 2, 102, '16-02-2018', 'Loan', 250000);
+INSERT INTO Account VALUES (1003, 3, 103, '16-08-2018', 'Savings', 20000);
+INSERT INTO Account VALUES (1004, 1, 104,'16-02-2018', 'Loan', 100000);
 COMMIT;
 
 -----------------------------------------------------------------------
@@ -51,7 +51,7 @@ SELECT
 FROM Customer c
 JOIN Account a ON c.CustID = a.CustID
 WHERE a.Account_type = 'Savings' 
-AND a.Open_date = TO_DATE('16-08-2018', 'DD-MM-YYYY');
+AND a.Open_date ='16-08-2018';
 
 ----------------------------------------------------------------------------------------
 UPDATE Customer
