@@ -27,7 +27,7 @@ db.authorwise.find().pretty();
 
 
 LibraryDB> db.Book.mapReduce(
-...   function() {if (this.Borrowed_status === true) { .emit(this.Author_name, this.Title);}},
+...   function() {if (this.Borrowed_status === true) { emit(this.Author_name, this.Title);}},
 ...   function(key, values) {return values;  },
 ...   { out: "borrowed_books_by_author" });
  db.borrowed_books_by_author.find().pretty();
